@@ -1,3 +1,113 @@
+<?php
+require_once __DIR__ . "/../../config/database.php";
+include "../../middleware/check_user_login.php";
+require_once __DIR__ . "/../../actions/auth/session_init.php";
+require_once __DIR__ . "/../../repo/user.php";
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Switch account: akhiri sesi lalu kembali ke halaman login.
+if (isset($_GET['switch'])) {
+    $_SESSION = [];
+    session_destroy();
+    header("Location: loginpage_user.php");
+    exit;
+}
+
+// Pastikan pengguna sudah login.
+if (empty($_SESSION['user_id'])) {
+    header("Location: loginpage_user.php");
+    exit;
+}
+$user_id = (int) $_SESSION['user_id'];
+
+// Batalkan tiket yang dipilih.
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_tickets'])) {
+    $ticket_ids = array_values(array_unique(array_filter(
+        array_map('intval', (array) ($_POST['ticket_ids'] ?? [])),
+        fn($id) => $id > 0
+    )));
+
+    if (empty($ticket_ids)) {
+        header("Location: profile.php?cancel=none");
+        exit;
+    }
+
+    $placeholders = implode(',', array_fill(0, count($ticket_ids), '?'));
+    $types = 'i' . str_repeat('i', count($ticket_ids));
+
+    try {
+        UserProfile::findUserStatusTicket($conn, $placeholders, $types, $user_id, $ticket_ids);
+        $cancelled_count = UserProfile::deleteUserStatusTicket(
+            $conn,
+            $placeholders,
+            $types,
+            $user_id,
+            $ticket_ids
+        );
+        header("Location: profile.php?cancel=ok&n=" . (int) $cancelled_count);
+    } catch (mysqli_sql_exception $e) {
+        header("Location: profile.php?cancel=error");
+    }
+    exit;
+}
+
+$cancel_status = $_GET['cancel'] ?? '';
+$cancelled_count = (int) ($_GET['n'] ?? 0);
+
+function rupiah($n)
+{
+    return 'Rp ' . number_format((float) $n, 0, ',', '.');
+}
+
+// Ambil data pengguna tanpa mengambil password.
+$user = UserProfile::findUserPassword($conn, $user_id);
+
+if (!$user) {
+    $_SESSION = [];
+    session_destroy();
+    header("Location: loginpage_user.php");
+    exit;
+}
+
+$email = $user['email'];
+$nama = ucfirst(strstr($email, '@', true) ?: $email);
+$inisial = strtoupper(substr($nama, 0, 1));
+
+// Ambil riwayat pembayaran/tiket pengguna.
+$hasil = UserProfile::findUserHistory($conn, $user_id);
+$history = [];
+while ($row = mysqli_fetch_assoc($hasil)) {
+    $history[] = $row;
+}
+
+$jumlah_tiket = count($history);
+$event_unik = [];
+foreach ($history as $item) {
+    $event_unik[$item['title']] = true;
+}
+$jumlah_event = count($event_unik);
+
+// Ambil foto konser dari tiket terbaru; jika tidak ada, gunakan konser terdekat.
+$foto = null;
+$judul_foto = '';
+foreach ($history as $h) {
+    if (!empty($h['img'])) {
+        $foto = $h['img'];
+        $judul_foto = $h['title'];
+        break;
+    }
+}
+if (!$foto) {
+    $r = UserProfile::findUserProfile($conn);
+    if ($r && ($c = mysqli_fetch_assoc($r))) {
+        $foto = $c['img'];
+        $judul_foto = $c['title'];
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="id">
 
@@ -158,21 +268,21 @@
                     <button type="button" id="user-menu-button" data-dropdown-toggle="user-dropdown"
                         data-dropdown-placement="bottom-end" class="flex items-center gap-2">
                         <span
-                            class="bg-avatar text-white font-bold w-10 h-10 rounded-full flex items-center justify-center">V</span>
+                            class="bg-avatar text-white font-bold w-10 h-10 rounded-full flex items-center justify-center"><?= htmlspecialchars($inisial) ?></span>
                         <iconify-icon icon="mdi:chevron-down" class="text-xl text-meta-gray"></iconify-icon>
                     </button>
                     <div id="user-dropdown"
                         class="hidden z-50 w-56 bg-card-white divide-y divide-third-100 rounded-xl shadow-lg border border-third-100">
                         <div class="px-4 py-3">
-                            <p class="text-sm font-semibold">Vinvin11</p>
-                            <p class="text-sm text-meta-gray truncate">Vinvin@Gmail.com</p>
+                            <p class="text-sm font-semibold"><?= htmlspecialchars($nama) ?></p>
+                            <p class="text-sm text-meta-gray truncate"><?= htmlspecialchars($email) ?></p>
                         </div>
                         <ul class="py-2 text-sm">
-                            <li><a href="loginpage_user.php"
+                            <li><a href="profile.php?switch=1"
                                     class="flex items-center gap-2 px-4 py-2 hover:bg-third-100"><iconify-icon
                                         icon="mdi:account-switch-outline" class="text-lg"></iconify-icon>Switch
                                     account</a></li>
-                            <li><a href="loginpage_user.php"
+                            <li><a href="../../actions/auth/logout.php"
                                     class="flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50"><iconify-icon
                                         icon="mdi:logout" class="text-lg"></iconify-icon>Log out</a></li>
                         </ul>
@@ -202,28 +312,31 @@
                     <!-- Kalau ada foto: <img src="..." class="w-24 h-24 rounded-full object-cover ring-4 ring-majorelle-100"> -->
                     <div
                         class="bg-avatar text-white text-4xl font-bold w-24 h-24 shrink-0 rounded-full flex items-center justify-center ring-4 ring-majorelle-100">
-                        V</div>
+                        <?= htmlspecialchars($inisial) ?>
+                    </div>
                     <div class="min-w-0">
-                        <h2 class="text-xl font-bold truncate">vinvin11</h2>
-                        <p class="text-sm font-bold break-all">Vinvin@Gmail.com</p>
+                        <h2 class="text-xl font-bold truncate"><?= htmlspecialchars($nama) ?></h2>
+                        <p class="text-sm font-bold break-all"><?= htmlspecialchars($email) ?></p>
                         <span
                             class="inline-flex items-center gap-1.5 mt-3 px-3 py-1 text-[11px] font-semibold text-majorelle-700 bg-majorelle-100 border border-majorelle-200 rounded-full">
-                            <iconify-icon icon="mdi:crown" class="text-base"></iconify-icon>Premium Member
+                            <iconify-icon icon="mdi:crown" class="text-base"></iconify-icon>Eventify Member
                         </span>
                     </div>
                 </div>
                 <div class="grid grid-cols-3 md:flex md:items-stretch text-center">
                     <div class="px-5 sm:px-7 flex flex-col items-center justify-center gap-1">
                         <iconify-icon icon="mdi:ticket-confirmation" class="text-3xl text-majorelle"></iconify-icon>
-                        <span class="text-xl font-bold">3</span><span class="text-xs font-semibold">Tickets</span>
+                        <span class="text-xl font-bold"><?= $jumlah_tiket ?></span><span
+                            class="text-xs font-semibold">Tickets</span>
                     </div>
                     <div class="px-5 sm:px-7 flex flex-col items-center justify-center gap-1 border-l border-third-300">
                         <iconify-icon icon="mdi:calendar-check" class="text-3xl text-majorelle"></iconify-icon>
-                        <span class="text-xl font-bold">2</span><span class="text-xs font-semibold">Event Joined</span>
+                        <span class="text-xl font-bold"><?= $jumlah_event ?></span><span
+                            class="text-xs font-semibold">Event Joined</span>
                     </div>
                     <div class="px-5 sm:px-7 flex flex-col items-center justify-center gap-1 border-l border-third-300">
                         <iconify-icon icon="mdi:heart" class="text-3xl text-majorelle"></iconify-icon>
-                        <span class="text-xl font-bold">12</span><span class="text-xs font-semibold">Like</span>
+                        <span class="text-xl font-bold">—</span><span class="text-xs font-semibold">Like</span>
                     </div>
                 </div>
             </section>
@@ -233,6 +346,19 @@
 
                 <section
                     class="lg:col-span-3 bg-card-white rounded-3xl shadow-lg shadow-brand-ink/10 p-5 sm:p-6 flex flex-col">
+                    <?php if ($cancel_status === 'ok'): ?>
+                        <p class="mb-4 rounded-xl bg-green-100 px-4 py-3 text-sm text-green-800">
+                            <?= $cancelled_count ?> tiket berhasil dibatalkan dan kursinya dikembalikan.
+                        </p>
+                    <?php elseif ($cancel_status === 'none'): ?>
+                        <p class="mb-4 rounded-xl bg-yellow-100 px-4 py-3 text-sm text-yellow-800">
+                            Pilih minimal satu tiket yang ingin dibatalkan.
+                        </p>
+                    <?php elseif ($cancel_status === 'error'): ?>
+                        <p class="mb-4 rounded-xl bg-red-100 px-4 py-3 text-sm text-red-800">
+                            Gagal membatalkan tiket. Tidak ada data yang diubah.
+                        </p>
+                    <?php endif; ?>
                     <div class="flex items-center justify-between gap-3 mb-3">
                         <h3 class="flex items-center gap-3 text-lg font-bold"><iconify-icon
                                 icon="mdi:ticket-confirmation" class="text-3xl text-majorelle"></iconify-icon>My Tickets
@@ -243,64 +369,68 @@
                     </div>
                     <div class="flex items-center justify-between mb-3">
                         <p class="text-xs text-meta-gray">Klik tiket untuk melihat QR-nya.</p>
-                        <label class="text-xs font-semibold flex items-center gap-2 cursor-pointer select-none"><input
-                                type="checkbox" id="select-all" class="w-4 h-4 accent-majorelle">Select all</label>
+                        <?php if (!empty($history)): ?>
+                            <label class="text-xs font-semibold flex items-center gap-2 cursor-pointer select-none">
+                                <input type="checkbox" id="select-all" class="w-4 h-4 accent-majorelle">Select all
+                            </label>
+                        <?php endif; ?>
                     </div>
 
-                    <form id="cancel-form" action="#" method="POST"
+                    <form id="cancel-form" action="profile.php" method="POST"
                         class="max-h-72 overflow-y-auto pr-1 flex flex-col gap-3">
-                        <!-- Tiket 1 -->
-                        <div
-                            class="flex items-center bg-sapphire-50 hover:bg-sapphire-100 border border-sapphire-200 rounded-2xl transition">
-                            <label class="pl-4 pr-2 self-stretch flex items-center cursor-pointer"><input
-                                    type="checkbox" name="ticket_ids[]" value="1"
-                                    class="ticket-check w-4 h-4 accent-majorelle shrink-0"></label>
-                            <a href="ticket.php?id=1" title="Lihat tiket dan QR"
-                                class="min-w-0 flex-1 flex items-center gap-4 py-3 pr-4">
-                                <!-- Ganti dengan <img src="..." class="w-24 h-16 sm:w-28 object-cover rounded-xl shrink-0"> -->
-                                <div
-                                    class="bg-thumb-cool w-24 h-16 sm:w-28 rounded-xl flex items-center justify-center shrink-0">
-                                    <iconify-icon icon="mdi:music" class="text-3xl text-white"></iconify-icon>
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <p class="text-sm font-extrabold leading-tight line-clamp-2">HATSUNE MIKU: MAGICAL
-                                        MIRAI</p>
-                                    <p class="mt-1.5 flex items-center gap-1.5 text-[11px] text-meta-gray"><iconify-icon
-                                            icon="mdi:map-marker-outline"
-                                            class="text-sm text-majorelle"></iconify-icon>Taman Anggrek, Jakarta</p>
-                                    <p class="mt-1 flex items-center gap-1.5 text-[11px] text-meta-gray"><iconify-icon
-                                            icon="mdi:calendar-blank-outline"
-                                            class="text-sm text-majorelle"></iconify-icon>1 September 2026</p>
-                                </div>
-                                <p class="hidden sm:block text-sm font-bold shrink-0">Rp 750.000</p>
-                            </a>
-                        </div>
-                        <!-- Tiket 2 -->
-                        <div
-                            class="flex items-center bg-sapphire-50 hover:bg-sapphire-100 border border-sapphire-200 rounded-2xl transition">
-                            <label class="pl-4 pr-2 self-stretch flex items-center cursor-pointer"><input
-                                    type="checkbox" name="ticket_ids[]" value="2"
-                                    class="ticket-check w-4 h-4 accent-majorelle shrink-0"></label>
-                            <a href="ticket.php?id=2" title="Lihat tiket dan QR"
-                                class="min-w-0 flex-1 flex items-center gap-4 py-3 pr-4">
-                                <div
-                                    class="bg-thumb-pink w-24 h-16 sm:w-28 rounded-xl flex items-center justify-center shrink-0">
-                                    <iconify-icon icon="mdi:guitar-electric" class="text-3xl text-white"></iconify-icon>
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <p class="text-sm font-extrabold leading-tight line-clamp-2">ANIME FEST JAKARTA 2026
+                        <?php if (empty($history)): ?>
+                            <p class="py-6 text-center text-sm text-meta-gray">Belum ada riwayat tiket.</p>
+                        <?php endif; ?>
+                        <?php foreach ($history as $h):
+                            $total = (float) $h['harga_konser'] + (float) $h['harga_kursi'];
+                            $waktu = !empty($h['created_at'])
+                                ? date('d M Y, H:i', strtotime($h['created_at']))
+                                : '-';
+                            $gambar_tiket = !empty($h['img']) ? $h['img'] : $foto;
+                            ?>
+                            <div
+                                class="flex items-center bg-sapphire-50 hover:bg-sapphire-100 border border-sapphire-200 rounded-2xl transition">
+                                <label class="pl-4 pr-2 self-stretch flex items-center cursor-pointer">
+                                    <input type="checkbox" name="ticket_ids[]" value="<?= (int) $h['id'] ?>"
+                                        class="ticket-check w-4 h-4 accent-majorelle shrink-0">
+                                </label>
+                                <a href="ticket.php?id=<?= (int) $h['id'] ?>" title="Lihat tiket dan QR"
+                                    class="min-w-0 flex-1 flex items-center gap-4 py-3 pr-4">
+                                    <?php if (!empty($gambar_tiket)): ?>
+                                        <img src="<?= htmlspecialchars($gambar_tiket) ?>"
+                                            alt="<?= htmlspecialchars($h['title']) ?>"
+                                            class="w-24 h-16 sm:w-28 rounded-xl object-cover shrink-0">
+                                    <?php else: ?>
+                                        <div
+                                            class="bg-thumb-cool w-24 h-16 sm:w-28 rounded-xl flex items-center justify-center shrink-0">
+                                            <iconify-icon icon="mdi:ticket-confirmation"
+                                                class="text-3xl text-white"></iconify-icon>
+                                        </div>
+                                    <?php endif; ?>
+                                    <div class="min-w-0 flex-1">
+                                        <p class="text-sm font-extrabold leading-tight line-clamp-2">
+                                            <?= htmlspecialchars($h['title']) ?>
+                                        </p>
+                                        <p class="mt-1.5 text-[11px] text-meta-gray">
+                                            Kursi <?= htmlspecialchars($h['seat_number'] ?? '-') ?>
+                                        </p>
+                                        <p class="mt-1 text-[11px] text-meta-gray">
+                                            <?= htmlspecialchars($waktu) ?>
+                                        </p>
+                                    </div>
+                                    <p class="hidden sm:block text-sm font-bold shrink-0">
+                                        <?= rupiah($total) ?>
                                     </p>
-                                    <p class="mt-1.5 flex items-center gap-1.5 text-[11px] text-meta-gray"><iconify-icon
-                                            icon="mdi:map-marker-outline"
-                                            class="text-sm text-majorelle"></iconify-icon>JIExpo Kemayoran, Jakarta</p>
-                                    <p class="mt-1 flex items-center gap-1.5 text-[11px] text-meta-gray"><iconify-icon
-                                            icon="mdi:calendar-blank-outline"
-                                            class="text-sm text-majorelle"></iconify-icon>20 Oktober 2026</p>
-                                </div>
-                                <p class="hidden sm:block text-sm font-bold shrink-0">Rp 350.000</p>
-                            </a>
-                        </div>
+                                </a>
+                            </div>
+                        <?php endforeach; ?>
                     </form>
+                    <?php if (!empty($history)): ?>
+                        <button type="submit" form="cancel-form" id="cancel-btn" name="cancel_tickets" value="1" disabled
+                            class="mt-4 w-full rounded-full bg-red-600 py-2.5 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50">
+                            Cancel Selected Tickets
+                        </button>
+                    <?php endif; ?>
 
                 </section>
 
@@ -319,7 +449,7 @@
                                     icon="mdi:bell-cog-outline" class="text-2xl"></iconify-icon><span
                                     class="flex-1">Notification Preferences</span><iconify-icon icon="mdi:chevron-right"
                                     class="text-2xl"></iconify-icon></a></li>
-                        <li><a href="loginpage_user.php"
+                        <li><a href="profile.php?switch=1"
                                 class="flex items-center gap-3 py-3 hover:text-majorelle transition"><iconify-icon
                                     icon="mdi:account-switch-outline" class="text-2xl"></iconify-icon><span
                                     class="flex-1">Switch Account</span><iconify-icon icon="mdi:chevron-right"
@@ -341,7 +471,7 @@
                         class="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-majorelle border border-majorelle rounded-full hover:bg-majorelle-50 transition">Contact
                         Support<iconify-icon icon="mdi:arrow-right" class="text-lg"></iconify-icon></a>
                 </section>
-                <a href="loginpage_user.php"
+                <a href="../../actions/auth/logout.php"
                     class="lg:col-span-2 inline-flex items-center justify-center gap-3 py-3 text-lg font-bold text-red-600 bg-red-100 hover:bg-red-200 border border-red-300 rounded-full transition">
                     <iconify-icon icon="mdi:logout-variant" class="text-2xl"></iconify-icon>Log Out
                 </a>
@@ -352,12 +482,38 @@
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
     <script>
         const selectAll = document.getElementById('select-all');
-        const checks = document.querySelectorAll('.ticket-check');
+        const checks = [...document.querySelectorAll('.ticket-check')];
         const cancelBtn = document.getElementById('cancel-btn');
-        const refresh = () => cancelBtn.disabled = ![...checks].some(c => c.checked);
-        selectAll.addEventListener('change', () => {checks.forEach(c => c.checked = selectAll.checked); refresh();});
-        checks.forEach(c => c.addEventListener('change', () => {selectAll.checked = [...checks].every(x => x.checked); refresh();}));
+
+        const refreshSelection = () => {
+            const selectedCount = checks.filter(check => check.checked).length;
+
+            if (cancelBtn) {
+                cancelBtn.disabled = selectedCount === 0;
+            }
+
+            if (selectAll) {
+                selectAll.checked = checks.length > 0 && selectedCount === checks.length;
+                selectAll.indeterminate = selectedCount > 0 && selectedCount < checks.length;
+            }
+        };
+
+        if (selectAll) {
+            selectAll.addEventListener('change', () => {
+                checks.forEach(check => {
+                    check.checked = selectAll.checked;
+                });
+                refreshSelection();
+            });
+        }
+
+        checks.forEach(check => {
+            check.addEventListener('change', refreshSelection);
+        });
+
+        refreshSelection();
     </script>
 </body>
 
 </html>
+<?php mysqli_close($conn); ?>
