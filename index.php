@@ -19,16 +19,13 @@ $e = fn($s) => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
     <title>Eventify - Find Your Next Unforgettable Event</title>
     <link rel="icon" href="<?= $e($logo_img) ?>">
 
-    <!-- Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Tailwind (link yang sama) + Flowbite -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet">
 
-    <!-- Color system dari desain -->
     <style type="text/tailwindcss">
         @theme {
             --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
