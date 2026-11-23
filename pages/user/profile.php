@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . "/../../config/database.php";
-include "../../middleware/check_user_login.php";
+// include "../../middleware/check_user_login.php";
 require_once __DIR__ . "/../../actions/auth/session_init.php";
 require_once __DIR__ . "/../../repo/user.php";
 

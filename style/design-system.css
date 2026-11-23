@@ -59,4 +59,30 @@
   --ds-brand-ink: #10103a;
   --ds-meta-gray: #4b5159;
   --ds-card-white: #ffffff;
+
+  /*  login pages user */
+    --ds-primary: #5541f5;
+
+    /* Background */
+    --ds-background: #eef0ff;
+    --ds-surface: #fdfaff;
+    --ds-decoration: #dce2ff;
+
+    /* Text */
+    --ds-text: #17183f;
+    --ds-text-muted: #626574;
+
+    /* Input */
+    --ds-input-bg: #f0f5fa;
+    --ds-input-border: #d9e1eb;
+    --ds-placeholder: #a9b5c5;
+
+    /* Gradient */
+    --ds-gradient-start: #365cf0;
+    --ds-gradient-end: #873be2;
+
+    /* Status */
+    --ds-danger: #dc2626;
+    --ds-success: #16a34a;
 }
+
