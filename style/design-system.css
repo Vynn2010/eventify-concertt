@@ -1,0 +1,62 @@
+/* ==========================================================
+   EVENTIFY DESIGN TOKENS
+   File ini hanya menyimpan nilai warna (single source of truth).
+   Utility class warna dan seluruh layout dibuat oleh Tailwind CSS v4.
+   ========================================================== */
+
+:root {
+  --ds-sapphire-50: #f5f7ff;
+  --ds-sapphire-100: #ebefff;
+  --ds-sapphire-200: #d0daff;
+  --ds-sapphire-300: #a6b8ff;
+  --ds-sapphire-400: #7e98ff;
+  --ds-sapphire-500: #4169ff;
+  --ds-sapphire-600: #3156de;
+  --ds-sapphire-700: #2845b5;
+  --ds-sapphire-800: #1f3590;
+  --ds-sapphire-900: #1b2b6b;
+  --ds-sapphire: #4169ff;
+  --ds-majorelle-50: #f6f5ff;
+  --ds-majorelle-100: #edebff;
+  --ds-majorelle-200: #d6d1ff;
+  --ds-majorelle-300: #b0a8ff;
+  --ds-majorelle-400: #8579ff;
+  --ds-majorelle-500: #5342ff;
+  --ds-majorelle-600: #4434e0;
+  --ds-majorelle-700: #3a2cb8;
+  --ds-majorelle-800: #2c2188;
+  --ds-majorelle-900: #1f185f;
+  --ds-majorelle: #5342ff;
+  --ds-slate-blue-50: #f7f6ff;
+  --ds-slate-blue-100: #efedff;
+  --ds-slate-blue-200: #dedaff;
+  --ds-slate-blue-300: #c2baff;
+  --ds-slate-blue-400: #a093ff;
+  --ds-slate-blue-500: #7b66ff;
+  --ds-slate-blue-600: #6650e6;
+  --ds-slate-blue-700: #5440c0;
+  --ds-slate-blue-800: #413190;
+  --ds-slate-blue-900: #2e2368;
+  --ds-slate-blue: #7b66ff;
+  --ds-pink-50: #fff5fa;
+  --ds-pink-100: #ffe3f1;
+  --ds-pink-200: #ffc9e4;
+  --ds-pink-300: #fba9d6;
+  --ds-pink-400: #ff7dbd;
+  --ds-pink-500: #ff4da6;
+  --ds-pink-600: #d9408b;
+  --ds-pink-700: #b2336f;
+  --ds-pink: #fba9d6;
+  --ds-third-50: #fbf8ff;
+  --ds-third-100: #f0eef3;
+  --ds-third-200: #e5e3e9;
+  --ds-third-300: #dad8dd;
+  --ds-third-400: #c9c7cc;
+  --ds-third-500: #a09fa4;
+  --ds-third-600: #666669;
+  --ds-third-700: #333335;
+  --ds-ghost: #fbf8ff;
+  --ds-brand-ink: #10103a;
+  --ds-meta-gray: #4b5159;
+  --ds-card-white: #ffffff;
+}
