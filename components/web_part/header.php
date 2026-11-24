@@ -1,6 +1,6 @@
 <?php
 // components/landing/header.php
-$root = "/eventify/";
+$root = "/";
 $base = $root . "pages/user/";
 $logo = $root . "assets/icon/logo.jpeg";
 
@@ -39,28 +39,36 @@ $nav_items = [
 
             <!-- Kanan: auth + hamburger -->
             <div class="flex items-center gap-2">
+
                 <?php if ($is_logged_in): ?>
+
                     <a href="<?= $base ?>profile.php"
                         class="max-w-[16rem] truncate bg-indigo-600 text-white text-2xl font-semibold rounded-full px-5 py-2.5 transition hover:bg-indigo-700">
                         <?= htmlspecialchars($display_name ?: 'Profile') ?>
                     </a>
-                <?php else: ?>
+
+                <?php elseif (empty($hide_auth)): ?>
+
                     <a href="<?= $base ?>loginpage_user.php"
                         class="hidden sm:inline-block text-slate-700 text-base font-semibold rounded-full px-5 py-3 transition hover:bg-slate-100 whitespace-nowrap">
                         Login
                     </a>
+
                     <a href="<?= $base ?>registerpage.php"
                         class="bg-indigo-600 hover:bg-indigo-700 text-white text-base font-semibold rounded-full px-6 py-3 transition">
                         Register
                     </a>
+
                 <?php endif; ?>
 
+                <!-- Hamburger tetap dipertahankan -->
                 <button id="menuBtn" type="button" aria-label="Menu"
                     class="md:hidden rounded-full w-10 h-10 flex items-center justify-center text-slate-700 hover:bg-slate-100 transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16" />
                     </svg>
                 </button>
+
             </div>
         </nav>
 
