@@ -1,8 +1,8 @@
 <?php
 $hero_img = "assets/img/indexmain.png";
-$logo_img = "assets/icon/logo.jpeg";
+$logo_img = "assets/icon/logo.jpg";
 
-$halaman_home = "index.php";
+$halaman_home = "pages/user/index.php";
 $halaman_about = "pages/user/about.php";
 $halaman_event = "pages/user/event.php";
 $halaman_register = "pages/user/registerpage.php";

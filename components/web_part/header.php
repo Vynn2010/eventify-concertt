@@ -9,7 +9,7 @@ $display_name = $_SESSION["nama"] ?? (isset($_SESSION["email"]) ? explode("@", $
 $current_page = basename($_SERVER['PHP_SELF'] ?? '');
 
 $nav_items = [
-    'Home' => 'home_page_user.php',
+    'Home' => 'index.php',
     'About' => 'about.php',
     'Event' => 'event.php',
 ];
@@ -20,7 +20,7 @@ $nav_items = [
         <nav class="flex items-center justify-between h-16">
 
             <!-- Logo -->
-            <a href="<?= $base ?>mainpage.php" class="inline-flex items-center gap-2.5">
+            <a href="<?= $base ?>index.php" class="inline-flex items-center gap-2.5">
                 <img src="../../assets/icon/logo.jpg" alt="Eventify" class="h-9 w-auto">
                 <span class="text-3xl transition font-bold text-slate-800">Eventify</span>
             </a>
@@ -37,39 +37,64 @@ $nav_items = [
                 <?php endforeach; ?>
             </ul>
 
-            <!-- Kanan: auth + hamburger -->
-            <div class="flex items-center gap-2">
+            <!-- Kanan: Auth + Search + Hamburger -->
+            <div class="flex items-center gap-3">
 
                 <?php if ($is_logged_in): ?>
+                    <!-- Search Bar -->
+                    <form action="<?= $base ?>event.php" method="GET"
+                        class="hidden sm:flex items-center gap-2 bg-slate-100 border border-slate-300 rounded-full px-4 py-2.5 w-52 lg:w-64">
+                        <button type="submit">
+                            <svg class="w-6 h-6 text-slate-700" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <circle cx="11" cy="11" r="7" />
+                                <path d="m20 20-4-4" />
+                            </svg>
+                        </button>
+                        <input type="text" name="q" placeholder="Cari event..."
+                            value="<?= htmlspecialchars($_GET["q"] ?? "") ?>"
+                            class="w-full bg-transparent outline-none text-sm">
+                    </form>
 
+                    <!-- Account -->
                     <a href="<?= $base ?>profile.php"
-                        class="max-w-[16rem] truncate bg-indigo-600 text-white text-2xl font-semibold rounded-full px-5 py-2.5 transition hover:bg-indigo-700">
-                        <?= htmlspecialchars($display_name ?: 'Profile') ?>
-                    </a>
+                        class="flex items-center gap-2 bg-indigo-950 hover:bg-indigo-900 text-white text-base font-semibold rounded-full px-5 py-2.5 transition whitespace-nowrap">
 
-                <?php elseif (empty($hide_auth)): ?>
-
-                    <a href="<?= $base ?>loginpage_user.php"
-                        class="hidden sm:inline-block text-slate-700 text-base font-semibold rounded-full px-5 py-3 transition hover:bg-slate-100 whitespace-nowrap">
-                        Login
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <circle cx="12" cy="8" r="4" />
+                            <path d="M5 21v-2a7 7 0 0 1 14 0v2" />
+                        </svg>
+                        <?= htmlspecialchars($display_name ?: 'Account') ?>
                     </a>
+                <?php else: ?>
 
-                    <a href="<?= $base ?>registerpage.php"
-                        class="bg-indigo-600 hover:bg-indigo-700 text-white text-base font-semibold rounded-full px-6 py-3 transition">
-                        Register
-                    </a>
+                    <!-- Login & Register -->
+                    <?php if ($hide_auth): ?>
+                        <a href="<?= $base ?>loginpage_user.php"
+                            class="hidden sm:inline-block text-slate-700 text-base font-semibold rounded-full px-5 py-3 transition hover:bg-slate-100 whitespace-nowrap">
+                            Login
+                        </a>
+
+                        <a href="<?= $base ?>registerpage.php"
+                            class="bg-indigo-600 hover:bg-indigo-700 text-white text-base font-semibold rounded-full px-6 py-3 transition">
+                            Register
+                        </a>
+
+                    <?php endif; ?>
 
                 <?php endif; ?>
 
-                <!-- Hamburger tetap dipertahankan -->
+                <!-- Hamburger -->
                 <button id="menuBtn" type="button" aria-label="Menu"
                     class="md:hidden rounded-full w-10 h-10 flex items-center justify-center text-slate-700 hover:bg-slate-100 transition">
+
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16" />
                     </svg>
                 </button>
 
             </div>
+
         </nav>
 
         <!-- Dropdown mobile -->
