@@ -67,11 +67,12 @@ $hide_auth = true;
     <main class="relative flex min-h-[calc(100vh-72px)] items-center justify-center overflow-hidden px-4 py-12 sm:px-6">
 
         <!-- Background Circle Top Right -->
-        <div class="pointer-events-none absolute -right-20 -top-20 h-80 w-80 rounded-full bg-[var(--ds-decoration)]">
+        <div class="pointer-events-none absolute -right-20 -top-20 h-100 w-100 rounded-full bg-[var(--ds-decoration)]">
         </div>
 
         <!-- Background Circle Bottom Left -->
-        <div class="pointer-events-none absolute -bottom-24 -left-24 h-80 w-80 rounded-full bg-[var(--ds-decoration)]">
+        <div
+            class="pointer-events-none absolute -bottom-24 -left-24 h-100 w-100 rounded-full bg-[var(--ds-decoration)]">
         </div>
 
         <!-- Login Card -->
