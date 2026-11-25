@@ -1,9 +1,10 @@
 <?php
 require_once __DIR__ . "/../../config/database.php";
 include "../../middleware/check_admin_login.php";
+require_once __DIR__ . "/../../repo/booking.php";
 require_once __DIR__ . "/../../repo/concert.php";
 require_once __DIR__ . "/../../helpers/format.php";
-require_once __DIR__ . "/../../repo/adminphp";
+require_once __DIR__ . "/../../repo/admin.php";
 require_once __DIR__ . "/../../helpers/admin/concert_forms.php";
 require_once __DIR__ . "/../../helpers/admin/concert_parts.php";
 
