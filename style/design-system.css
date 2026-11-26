@@ -4,7 +4,63 @@
    Utility class warna dan seluruh layout dibuat oleh Tailwind CSS v4.
    ========================================================== */
 
-:root {
+:root { /* =========================
+       PROFILE - SEMANTIC COLORS
+       ========================= */
+
+    --ds-profile-sidebar-start: var(--ds-sapphire-900);
+    --ds-profile-sidebar-end: var(--ds-sapphire-600);
+
+    --ds-profile-avatar-start: var(--ds-majorelle-500);
+    --ds-profile-avatar-end: var(--ds-sapphire-500);
+
+    --ds-profile-thumb-cool-start: var(--ds-sapphire-800);
+    --ds-profile-thumb-cool-end: var(--ds-sapphire-500);
+
+    --ds-profile-thumb-pink-start: var(--ds-majorelle-500);
+    --ds-profile-thumb-pink-end: var(--ds-pink-500);
+
+    /* Danger */
+    --ds-danger: #dc2626;
+    --ds-danger-hover: #b91c1c;
+    --ds-danger-bg: #fef2f2;
+    --ds-danger-bg-hover: #fee2e2;
+    --ds-danger-border: #fecaca;
+    --ds-danger-text: #dc2626;
+
+    /* Success */
+    --ds-success-bg: #dcfce7;
+    --ds-success-text: #166534;
+
+    /* Warning */
+    --ds-warning-bg: #fef9c3;
+    --ds-warning-text: #854d0e;
+
+    /* Profile gradients */
+    --ds-gradient-sidebar: linear-gradient(
+        180deg,
+        var(--ds-profile-sidebar-start),
+        var(--ds-profile-sidebar-end)
+    );
+
+    --ds-gradient-avatar: linear-gradient(
+        135deg,
+        var(--ds-profile-avatar-start),
+        var(--ds-profile-avatar-end)
+    );
+
+    --ds-gradient-thumb-cool: linear-gradient(
+        135deg,
+        var(--ds-profile-thumb-cool-start),
+        var(--ds-profile-thumb-cool-end)
+    );
+
+    --ds-gradient-thumb-pink: linear-gradient(
+        135deg,
+        var(--ds-profile-thumb-pink-start),
+        var(--ds-profile-thumb-pink-end)
+    );
+
   --ds-sapphire-50: #f5f7ff;
   --ds-sapphire-100: #ebefff;
   --ds-sapphire-200: #d0daff;

@@ -21,7 +21,7 @@ $nav_items = [
 
             <!-- Logo -->
             <a href="<?= $base ?>index.php" class="inline-flex items-center gap-2.5">
-                <img src="../../assets/icon/logo.jpg" alt="Eventify" class="h-9 w-auto">
+                <img src="<?= $logo ?>" alt="Eventify" class="h-9 w-auto">
                 <span class="text-3xl transition font-bold text-slate-800">Eventify</span>
             </a>
 
@@ -37,7 +37,7 @@ $nav_items = [
                 <?php endforeach; ?>
             </ul>
 
-            <!-- Kanan: Auth + Search + Hamburger -->
+            <!-- Kanan: Auth + Search + Hamburger-->
             <div class="flex items-center gap-3">
 
                 <?php if ($is_logged_in): ?>
