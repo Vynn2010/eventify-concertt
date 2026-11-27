@@ -493,14 +493,6 @@ $slider_images = [
                                     <?= $e($concert["artist"]) ?>
                                 </p>
 
-                                <?php if (!empty($concert["concert_description"])): ?>
-
-                                    <p class="concert-card-description text-[20px] leading-relaxed text-[#77758d] mt-4">
-                                        <?= $e($concert["concert_description"]) ?>
-                                    </p>
-
-                                <?php endif; ?>
-
                                 <div class="flex items-center gap-3 mt-5">
 
                                     <span class="text-[22px]">📅</span>
