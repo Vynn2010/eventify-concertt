@@ -10,7 +10,7 @@ $admin_menus = [
 ];
 ?>
 <!-- SIDEBAR -->
-<aside class="md:w-60 shrink-0 bg-[#17143D] text-[#F4F3FE] p-6 flex flex-col gap-8">
+<aside class="md:w-60 shrink-0 md:sticky md:top-0 md:h-screen bg-[#17143D] text-[#F4F3FE] p-6 flex flex-col gap-8">
     <div class="text-2xl font-bold">
         Eventify<span class="text-[#8F9BFB]">.</span>
         <div class="text-xs font-normal opacity-60 mt-1">Admin panel</div>

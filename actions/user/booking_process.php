@@ -110,7 +110,7 @@ try {
     exit;
 } catch (Throwable $e) {
     mysqli_rollback($conn);
-    // error_log($e->getMessage()); // aktifkan kalau perlu melihat penyebab gagal
+    // error_log($e->getMessage()); // aktifkan kalau perlu melihat penyebab error
     header("Location: ../pages/user/seat.php?id=$concert_id&error=kursi");
     exit;
 }
