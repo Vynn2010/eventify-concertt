@@ -5,7 +5,7 @@ require_once __DIR__ . "/../../repo/user.php";
 
 // Sudah login sebelumnya? Langsung ke halaman utama, tidak perlu login lagi
 if (!empty($_SESSION["user_id"])) {
-    header("Location: mainpage.php");
+    header("Location: index.php");
     exit;
 }
 
@@ -27,7 +27,7 @@ if (isset($_POST["masuk"])) {
             $_SESSION["email"] = $user["email"];
             $_SESSION["nama"] = $user["nama"] ?? $user["name"] ?? $user["username"] ?? explode("@", $user["email"])[0];
 
-            header("Location: mainpage.php");
+            header("Location: index.php");
             exit;
         } else {
             $_SESSION["login_berhasil"] = false;
@@ -36,7 +36,6 @@ if (isset($_POST["masuk"])) {
     }
 }
 
-$hide_auth = true;
 ?>
 
 <!DOCTYPE html>
