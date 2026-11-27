@@ -241,25 +241,55 @@ $slider_images = [
 
         .concert-card {
             min-width: 0;
+            display: flex;
+            flex-direction: column;
             background: white;
-            border-radius: 16px;
+            border: 1px solid #eeeaf8;
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(40, 35, 90, .08);
-            transition: .2s;
+            box-shadow: 0 3px 12px rgba(40, 35, 90, .07);
+            transition: .25s ease;
             text-decoration: none;
             color: inherit;
         }
 
         .concert-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 7px 18px rgba(40, 35, 90, .13);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(40, 35, 90, .13);
         }
 
-        .concert-card img {
+        .concert-card-image {
+            position: relative;
             width: 100%;
-            height: 180px;
+            height: 230px;
+            overflow: hidden;
+            background: #eeecff;
+        }
+
+        .concert-card-image img {
+            width: 100%;
+            height: 100%;
             object-fit: cover;
             display: block;
+            transition: .35s ease;
+        }
+
+        .concert-card:hover .concert-card-image img {
+            transform: scale(1.04);
+        }
+
+        .concert-card-content {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            padding: 20px;
+        }
+
+        .concert-card-description {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
         .special-card {
@@ -300,8 +330,12 @@ $slider_images = [
         }
 
         @media (max-width: 639px) {
-            .concert-card img {
-                height: 135px;
+            .concert-card-image {
+                height: 170px;
+            }
+
+            .concert-card-content {
+                padding: 15px;
             }
 
             .special-card img {
@@ -411,7 +445,7 @@ $slider_images = [
 
             <?php if ($search !== ""): ?>
 
-                <p class="text-sm text-[#77758d] mt-1">
+                <p class="text-base text-[#77758d] mt-1">
                     Hasil pencarian untuk "<?= $e($search) ?>" · <?= count($concerts) ?> event
                 </p>
 
@@ -420,56 +454,88 @@ $slider_images = [
             <!-- Event Cards -->
             <?php if ($concerts): ?>
 
-                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 mt-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6 mt-5">
 
                     <?php foreach ($concerts as $concert): ?>
 
-                        <a href="event.php?id=<?= (int) $concert["id"] ?>" class="concert-card">
+                        <a href="transaction.php?id=<?= (int) $concert["id"] ?>" class="concert-card">
 
-                            <?php if (!empty($concert["img"])): ?>
+                            <!-- Event Image -->
+                            <div class="concert-card-image">
 
-                                <img src="<?= $e(imagePath($concert["img"])) ?>" alt="<?= $e($concert["title"]) ?>" loading="lazy">
+                                <?php if (!empty($concert["img"])): ?>
 
-                            <?php else: ?>
+                                    <img src="<?= $e(imagePath($concert["img"])) ?>" alt="<?= $e($concert["title"]) ?>"
+                                        loading="lazy">
 
-                                <div class="h-[135px] sm:h-[180px] bg-gradient-to-br from-[#e5e7ff] to-[#fce7f3]"></div>
+                                <?php else: ?>
 
-                            <?php endif; ?>
+                                    <div class="h-full w-full bg-gradient-to-br from-[#e5e7ff] to-[#fce7f3]"></div>
 
-                            <div class="p-3 sm:p-4">
+                                <?php endif; ?>
 
-                                <div class="flex items-center justify-between gap-2 mb-2">
+                                <!-- Genre -->
+                                <span
+                                    class="absolute top-4 left-4 rounded-full bg-white/95 px-4 py-2 text-[20px] font-semibold text-[#5541f5] shadow-sm">
+                                    <?= $e($concert["genre_name"]) ?>
+                                </span>
 
-                                    <span
-                                        class="text-[10px] sm:text-xs font-semibold text-[#5541f5] bg-[#f0efff] px-2.5 py-1 rounded-full truncate">
-                                        <?= $e($concert["genre_name"]) ?>
-                                    </span>
+                            </div>
 
-                                    <span class="text-[9px] sm:text-xs text-[#85849a] whitespace-nowrap">
+                            <!-- Event Information -->
+                            <div class="concert-card-content">
+
+                                <h2 class="text-[22px] sm:text-[24px] font-bold leading-tight text-[#17183f]">
+                                    <?= $e($concert["title"]) ?>
+                                </h2>
+
+                                <p class="text-[20px] font-medium text-[#77758d] mt-2">
+                                    <?= $e($concert["artist"]) ?>
+                                </p>
+
+                                <?php if (!empty($concert["concert_description"])): ?>
+
+                                    <p class="concert-card-description text-[20px] leading-relaxed text-[#77758d] mt-4">
+                                        <?= $e($concert["concert_description"]) ?>
+                                    </p>
+
+                                <?php endif; ?>
+
+                                <div class="flex items-center gap-3 mt-5">
+
+                                    <span class="text-[22px]">📅</span>
+
+                                    <span class="text-[20px] font-medium text-[#55536d]">
                                         <?= formatDate($concert["concert_date"]) ?>
                                     </span>
 
                                 </div>
 
-                                <h2 class="text-sm sm:text-lg font-bold leading-tight line-clamp-2">
-                                    <?= $e($concert["title"]) ?>
-                                </h2>
+                                <div class="flex items-center gap-3 mt-3">
 
-                                <p class="text-xs sm:text-sm text-[#77758d] mt-1 truncate">
-                                    <?= $e($concert["artist"]) ?>
-                                </p>
+                                    <span class="text-[22px]">📍</span>
 
-                                <p class="text-[10px] sm:text-xs text-[#77758d] mt-3 truncate">
-                                    📍 <?= $e($concert["venue"]) ?>
-                                </p>
-
-                                <div class="mt-3 pt-3 border-t border-[#eeeaf8] flex items-center justify-between gap-1">
-
-                                    <span class="text-xs sm:text-base font-bold text-[#5541f5]">
-                                        <?= formatPrice($concert["price"]) ?>
+                                    <span class="text-[20px] font-medium text-[#55536d]">
+                                        <?= $e($concert["venue"]) ?>
                                     </span>
 
-                                    <span class="text-[9px] sm:text-xs font-semibold text-[#e83d9a]">
+                                </div>
+
+                                <div
+                                    class="mt-6 pt-5 border-t border-[#eeeaf8] flex flex-wrap items-center justify-between gap-3">
+
+                                    <div>
+                                        <p class="text-[20px] text-[#85849a]">
+                                            Ticket Price
+                                        </p>
+
+                                        <p class="text-[22px] font-bold text-[#5541f5] mt-1">
+                                            <?= formatPrice($concert["price"]) ?>
+                                        </p>
+                                    </div>
+
+                                    <span
+                                        class="rounded-full bg-gradient-to-r from-[#4169ff] to-[#5541f5] px-5 py-3 text-[20px] font-semibold text-white transition hover:brightness-110">
                                         View Event
                                     </span>
 
@@ -487,16 +553,16 @@ $slider_images = [
 
                 <div class="mt-5 rounded-2xl bg-white border border-[#eeeaf8] py-14 text-center">
 
-                    <h3 class="font-bold text-lg">
+                    <h3 class="font-bold text-xl">
                         Event tidak ditemukan
                     </h3>
 
-                    <p class="text-sm text-[#85849a] mt-2">
+                    <p class="text-base text-[#85849a] mt-2">
                         Coba kata kunci atau genre lainnya.
                     </p>
 
                     <a href="index.php"
-                        class="inline-block mt-5 rounded-full bg-[#5541f5] px-6 py-2.5 text-sm font-semibold text-white">
+                        class="inline-block mt-5 rounded-full bg-[#5541f5] px-6 py-3 text-base font-semibold text-white">
                         Lihat Semua Event
                     </a>
 
@@ -516,12 +582,12 @@ $slider_images = [
                         🎟 Special Concerts For You
                     </h2>
 
-                    <p class="text-sm sm:text-base text-[#85849a] mt-1">
+                    <p class="text-base text-[#85849a] mt-1">
                         Discover upcoming concerts
                     </p>
                 </div>
 
-                <a href="event.php" class="text-sm sm:text-base font-semibold text-[#5541f5] whitespace-nowrap">
+                <a href="event.php" class="text-base font-semibold text-[#5541f5] whitespace-nowrap">
                     See All
                 </a>
 
@@ -533,7 +599,7 @@ $slider_images = [
 
                     <?php foreach ($special_concerts as $concert): ?>
 
-                        <a href="event.php?id=<?= (int) $concert["id"] ?>" class="special-card">
+                        <a href="transaction.php?id=<?= (int) $concert["id"] ?>" class="special-card">
 
                             <?php if (!empty($concert["img"])): ?>
 
@@ -545,19 +611,19 @@ $slider_images = [
 
                             <?php endif; ?>
 
-                            <h3 class="mt-3 text-sm sm:text-lg font-bold leading-tight line-clamp-2">
+                            <h3 class="mt-3 text-[20px] sm:text-[22px] font-bold leading-tight line-clamp-2">
                                 <?= $e($concert["title"]) ?>
                             </h3>
 
-                            <p class="mt-1.5 text-xs sm:text-sm text-[#77758d] truncate">
+                            <p class="mt-2 text-[20px] text-[#77758d] truncate">
                                 <?= $e($concert["venue"]) ?>
                             </p>
 
-                            <p class="mt-1.5 text-xs sm:text-sm text-[#77758d]">
+                            <p class="mt-2 text-[20px] text-[#77758d]">
                                 <?= formatDate($concert["concert_date"]) ?>
                             </p>
 
-                            <p class="mt-2 text-sm sm:text-base font-bold text-[#5541f5]">
+                            <p class="mt-2 text-[20px] font-bold text-[#5541f5]">
                                 <?= formatPrice($concert["price"]) ?>
                             </p>
 
@@ -569,7 +635,7 @@ $slider_images = [
 
             <?php else: ?>
 
-                <p class="text-sm text-[#85849a]">
+                <p class="text-base text-[#85849a]">
                     Belum ada special concert.
                 </p>
 
@@ -607,12 +673,12 @@ $slider_images = [
                                 <div class="flex flex-wrap justify-center sm:justify-start gap-2 mb-4">
 
                                     <span
-                                        class="rounded-full bg-[#ffe5f1] text-[#e83d9a] px-4 py-1.5 text-xs sm:text-sm font-semibold">
+                                        class="rounded-full bg-[#ffe5f1] text-[#e83d9a] px-4 py-1.5 text-base font-semibold">
                                         Upcoming Event
                                     </span>
 
                                     <span
-                                        class="rounded-full bg-[#efedff] text-[#5541f5] px-4 py-1.5 text-xs sm:text-sm font-semibold">
+                                        class="rounded-full bg-[#efedff] text-[#5541f5] px-4 py-1.5 text-base font-semibold">
                                         <?= $e($featured_event["genre_name"]) ?>
                                     </span>
 
@@ -622,15 +688,15 @@ $slider_images = [
                                     <?= $e($featured_event["title"]) ?>
                                 </h2>
 
-                                <p class="text-base sm:text-lg text-[#77758d] mt-2">
+                                <p class="text-xl text-[#77758d] mt-2">
                                     <?= $e($featured_event["artist"]) ?>
                                 </p>
 
-                                <p class="text-sm sm:text-base text-[#77758d] mt-3">
+                                <p class="text-xl text-[#77758d] mt-3">
                                     📍 <?= $e($featured_event["venue"]) ?>
                                 </p>
 
-                                <p class="text-xl sm:text-2xl font-bold text-[#5541f5] mt-4">
+                                <p class="text-2xl font-bold text-[#5541f5] mt-4">
                                     <?= formatPrice($featured_event["price"]) ?>
                                 </p>
 
@@ -651,7 +717,7 @@ $slider_images = [
                                     EVENT START IN
                                 </p>
 
-                                <p class="text-sm text-white/75 mt-2 mb-7">
+                                <p class="text-base text-white/75 mt-2 mb-7">
                                     Don't miss this exciting experience!
                                 </p>
 
@@ -661,25 +727,25 @@ $slider_images = [
                                     <div
                                         class="w-[68px] sm:w-[76px] py-4 rounded-2xl bg-white text-[#5541f5] shadow-lg text-center">
                                         <div class="font-bold text-2xl sm:text-3xl" data-unit="days">00</div>
-                                        <div class="text-xs font-medium mt-1">Hari</div>
+                                        <div class="text-base font-medium mt-1">Hari</div>
                                     </div>
 
                                     <div
                                         class="w-[68px] sm:w-[76px] py-4 rounded-2xl bg-white text-[#5541f5] shadow-lg text-center">
                                         <div class="font-bold text-2xl sm:text-3xl" data-unit="hours">00</div>
-                                        <div class="text-xs font-medium mt-1">Jam</div>
+                                        <div class="text-base font-medium mt-1">Jam</div>
                                     </div>
 
                                     <div
                                         class="w-[68px] sm:w-[76px] py-4 rounded-2xl bg-white text-[#5541f5] shadow-lg text-center">
                                         <div class="font-bold text-2xl sm:text-3xl" data-unit="minutes">00</div>
-                                        <div class="text-xs font-medium mt-1">Menit</div>
+                                        <div class="text-base font-medium mt-1">Menit</div>
                                     </div>
 
                                     <div
                                         class="w-[68px] sm:w-[76px] py-4 rounded-2xl bg-white text-[#5541f5] shadow-lg text-center">
                                         <div class="font-bold text-2xl sm:text-3xl" data-unit="seconds">00</div>
-                                        <div class="text-xs font-medium mt-1">Detik</div>
+                                        <div class="text-base font-medium mt-1">Detik</div>
                                     </div>
 
                                 </div>
