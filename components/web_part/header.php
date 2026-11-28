@@ -43,7 +43,7 @@ $search_value = htmlspecialchars(
             <!-- Logo -->
             <a href="<?= $base ?>index.php" class="inline-flex items-center gap-2.5">
 
-                <img src="<?= $logo ?>" alt="Eventify" class="h-9 w-auto">
+                <img src="<?= $logo ?>" alt="Eventify" class="h-11 w-auto">
 
                 <span class="text-3xl transition font-bold text-slate-800">
                     Eventify
