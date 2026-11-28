@@ -65,9 +65,10 @@ $e = fn($s) => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
                     <!-- LOGO -->
                     <a href="<?= $e($halaman_home) ?>" class="flex items-center gap-3 w-fit">
 
-                        <img src="<?= $e($logo_img) ?>" alt="Eventify" class="w-10 h-10 object-contain">
+                        <img src="<?= $e($logo_img) ?>" alt="Eventify"
+                            class="w-12 h-12 object-contain mix-blend-multiply">
 
-                        <span class="text-2xl font-bold tracking-tight text-brand-ink">
+                        <span class="text-[32px] font-bold tracking-tight text-brand-ink">
                             Eventify
                         </span>
                     </a>
@@ -75,11 +76,11 @@ $e = fn($s) => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
                     <!-- DESKTOP NAVIGATION -->
                     <div class="hidden md:flex items-center justify-center">
 
-                        <ul class="flex items-center gap-8 lg:gap-10 text-lg font-medium">
+                        <ul class="flex items-center gap-8 lg:gap-10 text-[25px] font-medium">
 
                             <li>
                                 <a href="<?= $e($halaman_home) ?>"
-                                    class="text-majorelle hover:text-majorelle-700 transition">
+                                    class="text-meta-gray hover:text-majorelle-700 transition">
                                     Home
                                 </a>
                             </li>
@@ -105,12 +106,12 @@ $e = fn($s) => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
                     <div class="hidden md:flex items-center justify-end gap-2.5">
 
                         <a href="<?= $e($halaman_register) ?>"
-                            class="min-w-[100px] text-center text-white bg-sapphire hover:bg-sapphire-700 font-semibold text-sm rounded-full px-6 py-2.5 transition duration-200 shadow-sm">
+                            class="min-w-[150px] text-center text-white bg-sapphire hover:bg-sapphire-700 font-semibold text-[16px] rounded-full px-6 py-2.5 transition duration-200 shadow-sm">
                             Register
                         </a>
 
                         <a href="<?= $e($halaman_login) ?>"
-                            class="min-w-[85px] text-center text-sapphire border border-sapphire hover:bg-sapphire hover:text-white font-semibold text-sm rounded-full px-6 py-2.5 transition duration-200">
+                            class="min-w-[150px] text-center text-sapphire border border-sapphire hover:bg-sapphire hover:text-white font-semibold text-[16px] rounded-full px-6 py-2.5 transition duration-200">
                             Login
                         </a>
 
@@ -124,10 +125,8 @@ $e = fn($s) => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
                         <span class="sr-only">Buka menu</span>
 
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 6h16M4 12h16M4 18h16" />
-
                         </svg>
                     </button>
 
@@ -140,21 +139,21 @@ $e = fn($s) => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
 
                         <li>
                             <a href="<?= $e($halaman_home) ?>"
-                                class="block px-4 py-3 rounded-lg text-majorelle hover:bg-white/70 text-base">
+                                class="block px-4 py-3 rounded-lg text-majorelle hover:bg-white/70 text-[16px]">
                                 Home
                             </a>
                         </li>
 
                         <li>
                             <a href="<?= $e($halaman_about) ?>"
-                                class="block px-4 py-3 rounded-lg text-meta-gray hover:bg-white/70 text-base">
+                                class="block px-4 py-3 rounded-lg text-meta-gray hover:bg-white/70 text-[16px]">
                                 About
                             </a>
                         </li>
 
                         <li>
                             <a href="<?= $e($halaman_event) ?>"
-                                class="block px-4 py-3 rounded-lg text-meta-gray hover:bg-white/70 text-base">
+                                class="block px-4 py-3 rounded-lg text-meta-gray hover:bg-white/70 text-[16px]">
                                 Event
                             </a>
                         </li>
@@ -162,12 +161,12 @@ $e = fn($s) => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
                         <li class="grid grid-cols-2 gap-2 pt-2">
 
                             <a href="<?= $e($halaman_register) ?>"
-                                class="text-center text-white bg-sapphire hover:bg-sapphire-700 rounded-full py-2.5 font-semibold text-sm transition">
+                                class="text-center text-white bg-sapphire hover:bg-sapphire-700 rounded-full py-2.5 font-semibold text-[16px] transition">
                                 Register
                             </a>
 
                             <a href="<?= $e($halaman_login) ?>"
-                                class="text-center text-sapphire border border-sapphire hover:bg-sapphire hover:text-white rounded-full py-2.5 font-semibold text-sm transition">
+                                class="text-center text-sapphire border border-sapphire hover:bg-sapphire hover:text-white rounded-full py-2.5 font-semibold text-[16px] transition">
                                 Login
                             </a>
 
